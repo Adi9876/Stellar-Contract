@@ -1,7 +1,6 @@
 #![no_std]
 use soroban_sdk::{
-    contract, contractimpl, contracttype, symbol_short, vec, Address, Env, IntoVal, Map, Symbol,
-    Timepoint, Vec, I256,
+    contract, contractimpl, contracttype, symbol_short, vec, Address, Env, IntoVal, Map, Symbol, Timepoint, Vec, I256
 };
 
 #[contracttype]
@@ -82,7 +81,7 @@ impl PaymentGateway {
 
     pub fn remove_merchant(env: Env, invoker: Address, merchant: Address) {
         Self::only_owner(&env, &invoker);
-        let mut merchants: Vec<Address> = env
+        let merchants: Vec<Address> = env
             .storage()
             .instance()
             .get(&MERCH)
@@ -147,9 +146,9 @@ impl PaymentGateway {
             &token,
             &symbol_short!("trf_from"),
             vec![
-                payer.clone().into_val(&env),
-                link.merchant.clone().into_val(&env),
-                link.amount.clone().into_val(&env),
+                payer.clone().to_val(),
+                link.merchant.clone().to_val(),
+                link.amount.clone().to_val(),
             ],
         );
         env.events()
@@ -220,9 +219,9 @@ impl PaymentGateway {
             &token,
             &symbol_short!("trf_from"),
             vec![
-                subber.clone().into_val(&env),
-                plan.merchant.clone().into_val(&env),
-                plan.amount.clone().into_val(&env),
+                subber.clone().to_val(),
+                plan.merchant.clone().to_val(),
+                plan.amount.clone().to_val(),
             ],
         );
         env.events().publish((symbol_short!("Subd"), ctr), &ctr);
@@ -261,9 +260,9 @@ impl PaymentGateway {
             &token,
             &symbol_short!("trf_from"),
             vec![
-                subscriber.clone().into_val(&env),
-                plan.merchant.clone().into_val(&env),
-                plan.amount.clone().into_val(&env),
+                subscriber.clone().to_val(),
+                plan.merchant.clone().to_val(),
+                plan.amount.clone().to_val(),
             ],
         );
         sub.last_payment = now;

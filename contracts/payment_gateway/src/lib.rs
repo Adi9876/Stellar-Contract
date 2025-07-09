@@ -1,6 +1,6 @@
 #![no_std]
 use soroban_sdk::{
-    contract, contractimpl, contracttype, symbol_short, vec, Address, Env, IntoVal, Map, Symbol, Timepoint, Vec, I256
+    contract, contractimpl, contracttype, symbol_short, vec, Address, Env, Map, Symbol, Timepoint, Vec, I256
 };
 
 #[contracttype]
@@ -133,12 +133,12 @@ impl PaymentGateway {
 
     pub fn process_payment(env: Env, invoker: Address, link_id: u32) {
         invoker.require_auth();
-        let mut links: Map<u32, PaymentLink> = env
+        let links: Map<u32, PaymentLink> = env
             .storage()
             .instance()
             .get(&PLINK)
             .unwrap_or(Map::new(&env));
-        let mut link = links.get(link_id).expect("link not found");
+        let link = links.get(link_id).expect("link not found");
         assert!(link.active, "inactive link");
         let payer = invoker;
         let token: Address = env.storage().instance().get(&TOKEN).expect("Token");
@@ -189,7 +189,7 @@ impl PaymentGateway {
 
     pub fn subscribe(env: Env, invoker: Address, plan_id: u32) {
         invoker.require_auth();
-        let mut plans: Map<u32, SubscriptionPlan> = env
+        let plans: Map<u32, SubscriptionPlan> = env
             .storage()
             .instance()
             .get(&SPLAN)
@@ -204,7 +204,7 @@ impl PaymentGateway {
         let sub = Subscription {
             subscriber: subber.clone(),
             plan_id,
-            start_time: now,
+            start_time: now.clone(),
             last_payment: now,
             active: true,
         };

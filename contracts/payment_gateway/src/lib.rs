@@ -1,6 +1,6 @@
 #![no_std]
 use soroban_sdk::{
-    contract, contractimpl, contracttype, symbol_short, vec, Address, Env, Map, Symbol, Timepoint, Vec, I256
+    contract, contractimpl, contracttype, symbol_short, Address, Env, Map, Symbol,IntoVal, Timepoint, Vec, I256
 };
 
 #[contracttype]
@@ -144,13 +144,16 @@ impl PaymentGateway {
         let token: Address = env.storage().instance().get(&TOKEN).expect("Token");
         env.invoke_contract::<()>(
             &token,
-            &symbol_short!("trf_from"),
-            vec![
+            &Symbol::new(&env,"transfer_from"),
+            Vec::from_array(
                 &env,
-                payer.clone().to_val(),
-                link.merchant.clone().to_val(),
-                link.amount.clone().to_val(),
-            ],
+                [
+                    payer.clone().to_val(),
+                    payer.clone().to_val(),
+                    link.merchant.clone().to_val(),
+                    link.amount.clone().into_val(&env),
+                ]
+            ),
         );
         env.events()
             .publish((symbol_short!("Payd"), link_id), &link_id);
@@ -218,13 +221,23 @@ impl PaymentGateway {
         let token: Address = env.storage().instance().get(&TOKEN).expect("Token");
         env.invoke_contract::<()>(
             &token,
-            &symbol_short!("trf_from"),
-            vec![
+            &Symbol::new(&env,"transfer_from"),
+            // vec![
+            //     // &env,
+                // subber.clone().to_val(),
+                // subber.clone().to_val(),
+                // plan.merchant.clone().to_val(),
+                // plan.amount.clone().to_val(),
+            // ],
+            Vec::from_array(
                 &env,
-                subber.clone().to_val(),
-                plan.merchant.clone().to_val(),
-                plan.amount.clone().to_val(),
-            ],
+                [
+                    subber.clone().to_val(),
+                    subber.clone().to_val(),
+                    plan.merchant.clone().to_val(),
+                    plan.amount.clone().into_val(&env),
+                ]
+            ),
         );
         env.events().publish((symbol_short!("Subd"), ctr), &ctr);
         env.events().publish((symbol_short!("SPay"), ctr), &ctr);
@@ -260,13 +273,23 @@ impl PaymentGateway {
         let token: Address = env.storage().instance().get(&TOKEN).expect("Token");
         env.invoke_contract::<()>(
             &token,
-            &symbol_short!("trf_from"),
-            vec![
+            &Symbol::new(&env,"transfer_from"),
+            // vec![
+            //     // &env,
+            //     subscriber.clone().to_val(),
+            //     subscriber.clone().to_val(),
+            //     plan.merchant.clone().to_val(),
+            //     plan.amount.clone().to_val(),
+            // ],
+            Vec::from_array(
                 &env,
-                subscriber.clone().to_val(),
-                plan.merchant.clone().to_val(),
-                plan.amount.clone().to_val(),
-            ],
+                [
+                    subscriber.clone().to_val(),
+                    subscriber.clone().to_val(),
+                    plan.merchant.clone().to_val(),
+                    plan.amount.clone().into_val(&env),
+                ]
+            ),
         );
         sub.last_payment = now;
         subs.set((subscriber.clone(), subscription_id), sub.clone());
